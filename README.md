@@ -21,3 +21,5 @@
 ## Device Picture
 
 ![Mi MAX 2](http://i01.appmifile.com/webfile/globalimg/29/B8388A52-854A-94A5-D386-7F675F467FE1.jpg "Mi MAX 2")
+# aokp_device_xiaomi_oxygen
+# aokp_device_xiaomi_oxygen
