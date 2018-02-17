@@ -36,6 +36,8 @@ on early-init
     chmod 0755 /sys/kernel/debug
 
 on init
+    #export LD_SHIM_LIBS /system/vendor/lib64/lib-imsvt.so|libshims_ims.so
+
     # Set permissions for persist partition
     mkdir /persist 0771 root system
 
@@ -49,6 +51,21 @@ on init
     write /sys/fs/cgroup/memory/bg/memory.move_charge_at_immigrate 1
     chown root system /sys/fs/cgroup/memory/bg/tasks
     chmod 0660 /sys/fs/cgroup/memory/bg/tasks
+
+# from init.rc
+    mkdir /dev/cpuctl/bg_non_interactive
+    chown system system /dev/cpuctl/bg_non_interactive/tasks
+    chmod 0666 /dev/cpuctl/bg_non_interactive/tasks
+    # 5.0 %
+    write /dev/cpuctl/bg_non_interactive/cpu.shares 52
+    write /dev/cpuctl/bg_non_interactive/cpu.rt_period_us 1000000
+    # active FIFO threads will never be in BG
+    write /dev/cpuctl/bg_non_interactive/cpu.rt_runtime_us 10000
+    #add by xiaomi for write fs to /cache/recovery
+    setprop persist.cache.trigger 1
+
+on property:persist.cache.trigger=1 && property:persist.radio.goldencopy_flag=true
+    write /cache/recovery/efs 1
 
 on post-fs
     chmod 0755 /sys/kernel/debug/tracing
@@ -373,6 +390,9 @@ on post-fs-data
     chown system system /sys/class/leds/led:torch_1/brightness
     chown system system /sys/class/leds/led:switch/brightness
     chown system system /sys/class/leds/flashlight/brightness
+    # from init
+    chown system system /sys/class/leds/white/brightness
+    chown system system /sys/class/leds/white/blink
 
 service perfd /system/vendor/bin/perfd
    class main
